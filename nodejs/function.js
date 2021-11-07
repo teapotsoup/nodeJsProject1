@@ -1,0 +1,21 @@
+function onetwothree(){
+ console.log(1);
+ console.log(2);
+ console.log(3);
+}
+onetwothree();
+console.log('A');
+console.log('Z');
+console.log('B');
+onetwothree();
+console.log('F');
+console.log('C');
+console.log('P');
+console.log('J');
+onetwothree();
+console.log('U');
+console.log('A');
+console.log('Z');
+console.log('J');
+console.log('I');
+onetwothree();
