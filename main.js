@@ -2,37 +2,8 @@ var http = require("http");
 var fs = require("fs");
 var url = require("url");
 const querystring = require("querystring");
-
+let template= require("./lib/template.js");
 //모듈들
-
-function templateHTML(title, list, body, control) {
-  return `
-        <!doctype html>
-        <html>
-        <head>
-          <title>WEB - ${title}</title>
-          <meta charset="utf-8">
-        </head>
-        <body>
-          <h1><a href="/">WEB</a></h1>
-          ${list}
-          ${control}
-          ${body}
-        </body>
-        </html>
-        `;
-}
-
-function templateList(filelist) {
-  var list = "<ul>"; //list 변수에 html 태그인 <ul>을 할당한다.
-  for (let i = 0; i < filelist.length; ++i) {
-    //filelist의 요소 갯수만큼
-    list = list + `<li><a href="/?id=${filelist[i]}">${filelist[i]}</a></li>`;
-  }
-  list = list + "</ul>"; //배열 내 요소 갯수만큼 li태그 삽입하고 반복문 종료후 ul로 닫음
-
-  return list;
-}
 
 var app = http.createServer(function (request, response) {
   var _url = request.url; //request.url - 사용자가 선택한 주소 전체
@@ -47,21 +18,21 @@ var app = http.createServer(function (request, response) {
         // filelist는 data 파일 내 파일들 제목 배열이다. EX) [ 'CSS', 'HTML', 'JavaScript', 'nodejs' ]
         var title = "Welcome";
         var desc = "Hello, Node.js";
-        let list = templateList(filelist);
-        var template = templateHTML(
+        let list = template.list(filelist);
+        var html = template.html(
           title,
           list,
           `<h2>${title}</h2>${desc}`,
           `<a href="/create">create</a>`
         );
         response.writeHead(200);
-        response.end(template);
+        response.end(html);
       });
     } else {
       fs.readdir("./data",  (error, filelist)=>{
         fs.readFile(`data/${title}`, "utf8",  (err, desc)=> {
-          let list = templateList(filelist);
-          var template = templateHTML(
+          let list = template.list(filelist);
+          var html = template.html(
             title,
             list,
             `<h2>${title}</h2>${desc}`,
@@ -73,7 +44,7 @@ var app = http.createServer(function (request, response) {
             </form>`
           );//쿼리 스트링이 있으면 get방식
           response.writeHead(200);
-          response.end(template);
+          response.end(html);
         });
       });
     }
@@ -82,8 +53,8 @@ var app = http.createServer(function (request, response) {
     fs.readdir("./data", (error, filelist) => {
       // filelist는 data 파일 내 파일들 제목 배열이다. EX) [ 'CSS', 'HTML', 'JavaScript', 'nodejs' ]
       var title = "WEB - create";
-      let list = templateList(filelist);
-      var template = templateHTML(
+      let list = template.list(filelist);
+      var html = template.html(
         title,
         list,
         `
@@ -100,7 +71,7 @@ var app = http.createServer(function (request, response) {
         ""
       ); //사용자가 post방식으로 정보를 전달했을때 포스트방식으로 전달된 데이터를 노드 js는 어떻게 가져오는가
       response.writeHead(200);
-      response.end(template);
+      response.end(html);
     });
   } else if (pathname === "/create_process") {
     let body = "";
@@ -126,8 +97,8 @@ var app = http.createServer(function (request, response) {
   } else if (pathname === "/update") {
     fs.readdir("./data",  (error, filelist)=> {
       fs.readFile(`data/${title}`, "utf8",  (err, desc) =>{
-        let list = templateList(filelist);
-        var template = templateHTML(
+        let list = template.list(filelist);
+        var html = template.html(
           title,
           list,
           `
@@ -145,7 +116,7 @@ var app = http.createServer(function (request, response) {
           `<a href="/create">create</a> <a href="/update?id=${title}">update</a>`
         );
         response.writeHead(200);
-        response.end(template);
+        response.end(html);
       });
     });
   } 
